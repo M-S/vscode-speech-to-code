@@ -15,10 +15,10 @@ const showCommands = () => {
   let commandHtml = "";
   commands.forEach(function (item) {
     console.log({ item });
-    commandHtml += "<span> " + item + " </span>";
+    commandHtml += ` <span style='background-color: wheat;'>${item}</span> |`;
   });
   const hints = document.querySelector(".hints");
-  hints.innerHTML = "When recording has started , Try " + commandHtml + ".";
+  hints.innerHTML = "When recording has started , Try these commands: " + commandHtml + ".";
 };
 
 Speech.onresult = (event) => {
@@ -27,13 +27,14 @@ Speech.onresult = (event) => {
     if (event.results[i].isFinal) {
       transc += event.results[i][0].transcript;
       window.newTranscript(transc);
-      document.querySelector(".output").innerText = encodeURI(transc);
+      document.querySelector(".output").innerText = transc;
     }
   }
 };
 Speech.onstart = (event) => {
   showCommands();
   document.querySelector(".status").innerText = "Recording started";
+  document.querySelector(".error").innerText = "";
   window.newStart(event);
   if (document.querySelector(".start-button").classList.contains("show")) {
     document.querySelector(".start-button").classList.remove("show");
