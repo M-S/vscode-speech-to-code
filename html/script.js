@@ -1,21 +1,25 @@
 const Speech = new webkitSpeechRecognition();
 //add speech grammar list
-/* const SpeechRecognitionList = new webkitSpeechGrammarList();
-const commands = [ 'create new folder' , 'add function'];
-const grammar = '#JSGF V1.0; grammar commands; public <command> = ' + commands.join(' | ') + ' ;'
+const SpeechRecognitionList = new webkitSpeechGrammarList();
+const commands = ["create new folder", "add function"];
+const grammar =
+  "#JSGF V1.0; grammar commands; public <command> = " +
+  commands.join(" | ") +
+  " ;";
 SpeechRecognitionList.addFromString(grammar, 1);
-Speech.grammars = SpeechRecognitionList; */
+Speech.grammars = SpeechRecognitionList;
 
 Speech.interimResults = true;
 
-/* let commandHtml= '';
-commands.forEach(function(item){
-  console.log(item);
-  commandHtml += '<span> ' + item + ' </span>';
-});
-const hints = document.querySelector('.hints');
-hints.innerHTML = 'When recording has started , Try ' + commandHtml + '.'; */
-
+const showCommands = () => {
+  let commandHtml = "";
+  commands.forEach(function (item) {
+    console.log({ item });
+    commandHtml += "<span> " + item + " </span>";
+  });
+  const hints = document.querySelector(".hints");
+  hints.innerHTML = "When recording has started , Try " + commandHtml + ".";
+};
 
 Speech.onresult = (event) => {
   for (let i = event.resultIndex; i < event.results.length; i++) {
@@ -28,13 +32,17 @@ Speech.onresult = (event) => {
   }
 };
 Speech.onstart = (event) => {
+  showCommands();
   document.querySelector(".status").innerText = "Recording started";
   window.newStart(event);
   if (document.querySelector(".start-button").classList.contains("show")) {
     document.querySelector(".start-button").classList.remove("show");
   }
 };
-Speech.onerror = (event) => window.newError(event.error);
+Speech.onerror = (event) => {
+  document.querySelector(".error").innerText = "Something went wrong! Try again later.";
+  window.newError(event.error);
+}
 Speech.onend = (event) => {
   document.querySelector(".status").innerText = "Recording stopped!!";
   window.newEnd(event);

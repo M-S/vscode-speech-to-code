@@ -56,8 +56,8 @@ class Client extends EventEmiter {
       await page.exposeFunction('newEnd', () => this.emit('end'));
       await page.exposeFunction('newStart', () => this.emit('start'));
       await page.exposeFunction('newReady', () => this.emit('ready'));
-      /* await page.exposeFunction('newNoMatch', () => this.emit('nomatch'));
-      await page.exposeFunction('newResult', () => this.emit('result'));
+      await page.exposeFunction('newNoMatch', () => this.emit('nomatch'));
+      /* await page.exposeFunction('newResult', () => this.emit('result'));
       await page.exposeFunction('newSpeechStart', () => this.emit('speechstart'));
       await page.exposeFunction('newSpeechEnd', () => this.emit('speechend')); */
 
