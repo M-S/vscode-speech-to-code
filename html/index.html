@@ -1,30 +1,110 @@
-<html>
-    <head>
-        <title>Speech to code</title>
-        <script>
-                const recognition = new webkitSpeechRecognition();
-                
-                recognition.interimResults = true;
-                
-                recognition.onresult = (event) => {
-                    for (let i = event.resultIndex; i < event.results.length; i++) {
-                    let transc = '';
-                    if(event.results[i].isFinal){
-                            transc += event.results[i][0].transcript;
-                            window.newTranscript(transc)
-                        }
-                    }
-                }
-                recognition.onstart = (event) => window.newStart(event)
-                recognition.onerror = (event) => window.newError(event.error)
-                recognition.onend = (event) => window.newEnd(event)
-                
-                function startRecording(continuous){
-                    recognition.continuous = continuous;
-                    recognition.start()
-                }
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-                window.newReady()
-        </script>
-    </head>
+    <title>Speech to code</title>
+
+    <!-- CSS only -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <style>
+      * {
+        box-sizing: content-box;
+      }
+      body {
+        margin: 100px;
+      }
+      .start-button {
+        display: none;
+      }
+      .show {
+        display: block;
+      }
+    </style>
+    <script>
+      const Speech = new webkitSpeechRecognition();
+      //add speech grammar list
+      /* const SpeechRecognitionList = new webkitSpeechGrammarList();
+const commands = [ 'create new folder' , 'add function'];
+const grammar = '#JSGF V1.0; grammar commands; public <command> = ' + commands.join(' | ') + ' ;'
+SpeechRecognitionList.addFromString(grammar, 1);
+Speech.grammars = SpeechRecognitionList; */
+
+      Speech.interimResults = true;
+
+      /* let commandHtml= '';
+commands.forEach(function(item){
+  console.log(item);
+  commandHtml += '<span> ' + item + ' </span>';
+});
+const hints = document.querySelector('.hints');
+hints.innerHTML = 'When recording has started , Try ' + commandHtml + '.'; */
+
+      Speech.onresult = (event) => {
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          let transc = "";
+          if (event.results[i].isFinal) {
+            transc += event.results[i][0].transcript;
+            window.newTranscript(transc);
+            document.querySelector(".output").innerText = encodeURI(transc);
+          }
+        }
+      };
+      Speech.onstart = (event) => {
+        document.querySelector(".status").innerText = "Recording started";
+        window.newStart(event);
+        if (
+          document.querySelector(".start-button").classList.contains("show")
+        ) {
+          document.querySelector(".start-button").classList.remove("show");
+        }
+      };
+      Speech.onerror = (event) => window.newError(event.error);
+      Speech.onend = (event) => {
+        document.querySelector(".status").innerText = "Recording stopped!!";
+        window.newEnd(event);
+        document.querySelector(".start-button").classList.add("show");
+      };
+      /* Speech.onnomatch = (event) => window.newNoMatch(event)
+                Speech.onresult = (event) => window.newResult(event)
+                Speech.onspeechstart = (event) => window.newSpeechStart(event)
+                Speech.onspeechend = (event) => window.newSpeechEnd(event) */
+
+      function startRecording(continuous) {
+        Speech.continuous = continuous;
+        Speech.start();
+      }
+
+      window.newReady();
+    </script>
+    <!-- <script src="script.js"></script> -->
+  </head>
+  <body>
+    <h1>VS Code speech to Code Extension</h1>
+
+    <p class="hints"></p>
+    <div>
+      <h3>Status:</h3>
+      <p class="status"></p>
+      <h3>Speak one of these commands:</h3>
+      <p class="hints"></p>
+      <h3>Output</h3>
+      <p class="output"></p>
+      <button type="button" class="start-button" onclick="startRecording(true)">
+        Start Speech Recording
+      </button>
+    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+  </body>
 </html>

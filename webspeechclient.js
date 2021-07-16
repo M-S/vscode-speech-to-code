@@ -1,4 +1,4 @@
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-core');
 const EventEmiter = require('events');
 const path = require('path');
 
@@ -7,12 +7,14 @@ class Client extends EventEmiter {
    * @param {Object} obj
    * @param {String} obj.chromePath
    * @param {Boolean} obj.continuous
+   * @param {Boolean} obj.headless
    */
-  constructor({ chromePath, continuous }) {
+  constructor({ chromePath, continuous, headless }) {
     super();
     if (!Client.instance) {
       this.chromePath = chromePath;
       this.continuous = continuous || false;
+      this.headless = headless;
       this.init();
       Client.instance = this;
     }
@@ -26,11 +28,11 @@ class Client extends EventEmiter {
   async init() {
     try {
       this.browser = await puppeteer.launch({
-        headless: false,
+        headless: this.headless,
         args: [
-          '--window-size=0,0',
+          //'--window-size=0,0',
           '--enable-speech-input',
-          '--window-position=0,0',
+          //'--window-position=0,0',
           '--enable-speech-dispatcher', // Needed for Linux?
           '--use-fake-ui-for-media-stream', // dissable mic popup
           '--no-first-run',
@@ -54,6 +56,11 @@ class Client extends EventEmiter {
       await page.exposeFunction('newEnd', () => this.emit('end'));
       await page.exposeFunction('newStart', () => this.emit('start'));
       await page.exposeFunction('newReady', () => this.emit('ready'));
+      /* await page.exposeFunction('newNoMatch', () => this.emit('nomatch'));
+      await page.exposeFunction('newResult', () => this.emit('result'));
+      await page.exposeFunction('newSpeechStart', () => this.emit('speechstart'));
+      await page.exposeFunction('newSpeechEnd', () => this.emit('speechend')); */
+
       await page.goto(`file:${path.join(__dirname, '/html/index.html')}`);
     } catch (err) {
       this.emit('error', err);
