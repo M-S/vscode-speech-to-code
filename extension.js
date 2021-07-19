@@ -2,7 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 const vscode = require("vscode");
 const SpeechClient = require("./webspeechclient");
-const actions = require("./actions");
+const extensionActions = require("./actions");
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 
@@ -37,27 +37,22 @@ function activate(context) {
       });
       //log the speech recognition output
       client.on("data", (transcript) => {
-        const commands = ["create new folder", "add function"];
-        console.log(transcript);
-        if (commands.includes(transcript)) {
+        const commands = ["add function", "add for each", "add for in", "add for of", "add if", "add if else"];
+        const actions = ["add line comment", "toggle block comment", "remove line comment", "format document"];
+        const transcriptCommand =transcript.toLowerCase().trim();
+        console.log(transcriptCommand);
+        if (commands.includes(transcriptCommand)) {
           vscode.window.showInformationMessage(
-            "Recognising Command: # " + transcript
+            "Executing Command: # " + transcriptCommand
           );
-          switch (transcript) {
-            case "add function":
-              vscode.window.showInformationMessage(
-                "Executing Command: # " + transcript
-              );
-              actions.writeText(vscode);
-              break;
-
-            default:
-              vscode.window.showInformationMessage(
-                "Executing Command: # " + transcript
-              );
-              break;
-          }
+          extensionActions.writeText(vscode, transcriptCommand);
+        } else if(actions.includes(transcriptCommand)) {
+          vscode.window.showInformationMessage(
+            "Executing Action: # " + transcriptCommand
+          );
+          extensionActions.executeCommand(vscode, transcriptCommand);
         }
+        
       });
     }
   );

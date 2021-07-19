@@ -1,7 +1,7 @@
 const Speech = new webkitSpeechRecognition();
 //add speech grammar list
 const SpeechRecognitionList = new webkitSpeechGrammarList();
-const commands = ["create new folder", "add function"];
+const commands = ["add function", "add for each", "add for in", "add for of", "add if", "add if else", "add line comment", "toggle block comment", "remove line", "format document"];
 const grammar =
   "#JSGF V1.0; grammar commands; public <command> = " +
   commands.join(" | ") +
